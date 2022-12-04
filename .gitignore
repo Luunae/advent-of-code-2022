@@ -1,3 +1,6 @@
+# Advent of Code input files. These will be saved with names of three-character strings followed by .txt
+./inputs/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
