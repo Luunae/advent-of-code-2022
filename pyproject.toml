@@ -8,6 +8,7 @@ packages = [{include = "advent_of_code_2022"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+black = "^22.10.0"
 
 
 [build-system]
