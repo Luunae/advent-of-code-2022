@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "advent-of-code-2022"
+version = "0.1.0"
+description = ""
+authors = ["Luna <49705655+Luunae@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "advent_of_code_2022"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
