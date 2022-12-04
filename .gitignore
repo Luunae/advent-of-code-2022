@@ -1,4 +1,4 @@
-# Advent of Code input files. These will be saved with names of three-character strings followed by .txt
+# Advent of Code input files. These will be saved with names of two-numbers(representing the day) followed by .txt - e.g. 01.txt
 ./inputs/*
 
 # Byte-compiled / optimized / DLL files
