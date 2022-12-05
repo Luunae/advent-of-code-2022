@@ -42,7 +42,26 @@ def day_02b():
     return total_score
 
 
+def day_03a():
+    rucksacks = prepare_simple_input("inputs/03.txt")
+    # Make a lambda function to split each string in rucksacks into a tuple of two strings at the halfway point.
+    rucksacks = list(map(lambda x: (x[: len(x) // 2], x[len(x) // 2 :]), rucksacks))
+    priority_sum = 0
+    for rucksack in rucksacks:
+        for letter in rucksack[0]:
+            if letter in rucksack[1]:
+                priority_sum += rucksack_valuation(letter)
+                break
+    return priority_sum
+
+
 # ====================== Helper Functions ======================
+def prepare_simple_input(filename: str) -> list:
+    with open(filename) as f:
+        data = f.read().splitlines()
+    return data
+
+
 def prepare_day_one() -> list[list]:
     with open("inputs/01.txt") as f:
         data = f.read().splitlines()
@@ -105,7 +124,16 @@ def rig_rock_paper_scissors(prompt: tuple) -> int:
         return score_rock_paper_scissors(outcome)
 
 
+def rucksack_valuation(input: str) -> int:
+    # ord('a') - 96 = 1
+    # ord('A') - 38 = 27
+    if input.islower():
+        return ord(input) - 96
+    else:
+        return ord(input) - 38
+
+
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_02b())
+    print(day_03a())
