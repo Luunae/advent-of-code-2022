@@ -55,6 +55,21 @@ def day_03a():
     return priority_sum
 
 
+def day_03b():
+    rucksacks = prepare_simple_input("inputs/03.txt")
+    groups = []
+    # Group each three rucksacks together in a tuple in the groups list.
+    for i in range(0, len(rucksacks), 3):
+        groups.append((rucksacks[i], rucksacks[i + 1], rucksacks[i + 2]))
+    priority_sum = 0
+    for group in groups:
+        for letter in group[0]:
+            if letter in group[1] and letter in group[2]:
+                priority_sum += rucksack_valuation(letter)
+                break
+    return priority_sum
+
+
 # ====================== Helper Functions ======================
 def prepare_simple_input(filename: str) -> list:
     with open(filename) as f:
@@ -124,16 +139,20 @@ def rig_rock_paper_scissors(prompt: tuple) -> int:
         return score_rock_paper_scissors(outcome)
 
 
-def rucksack_valuation(input: str) -> int:
+def rucksack_valuation(character: str) -> int:
     # ord('a') - 96 = 1
     # ord('A') - 38 = 27
-    if input.islower():
-        return ord(input) - 96
+    if len(character) != 1:
+        raise ValueError("Character must be a single letter.")
+    if not character.isalpha():
+        raise ValueError("Character must be alphabetical.")
+    if character.islower():
+        return ord(character) - 96
     else:
-        return ord(input) - 38
+        return ord(character) - 38
 
 
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_03a())
+    print(day_03b())
