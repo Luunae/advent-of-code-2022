@@ -98,33 +98,25 @@ def day_04b():
 
 
 def day_05a():
-    puzzle_input = prepare_simple_input("inputs/05.dat")
-    number_of_stacks = 0
-    for row in puzzle_input:
-        if row[1] == "1":
-            number_of_stacks = row[-2]
-            break
-    stacks = []
-    for i in range(int(number_of_stacks)):
-        stacks.append([])
-    for row in puzzle_input:
-        if row[1] == "1":
-            break
-        for character in range(1, (len(row) - 1), 4):
-            if row[character] != " ":
-                stacks[character // 4].insert(0, row[character])
-    instructions = []
-    for line in puzzle_input:
-        if line == "":
-            continue
-        if line[0] == "m":
-            # I hate data mangling I hate data mangling I hate data mangling.
-            piece_a = list(line.split(" "))
-            piece_b = [int(piece_a[1]), int(piece_a[3]) - 1, int(piece_a[5]) - 1]
-            instructions.append(tuple(piece_b))
+    preparations: tuple[list, list] = prepare_day_five()
+    stacks, instructions = preparations
     for command in instructions:
         for i in range(int(command[0])):
             stacks[command[2]].append(stacks[command[1]].pop())
+    final_word = ""
+    for stack in stacks:
+        final_word += stack[-1]
+    return final_word
+
+
+def day_05b():
+    preparations: tuple[list, list] = prepare_day_five()
+    stacks, instructions = preparations
+    for command in instructions:
+        # Move the last command[0] elements from stack[command[1]] to stack[command[2]]
+        number_of_moves = command[0]
+        for i in range(command[0]):
+            stacks[command[2]].append(stacks[command[1]].pop(-number_of_moves + i))
     final_word = ""
     for stack in stacks:
         final_word += stack[-1]
@@ -170,6 +162,35 @@ def prepare_day_four():
             c, d = second.split("-")
             groups.append((int(a), int(b), int(c), int(d)))
     return groups
+
+
+def prepare_day_five():
+    puzzle_input = prepare_simple_input("inputs/05.dat")
+    number_of_stacks = 0
+    for row in puzzle_input:
+        if row[1] == "1":
+            number_of_stacks = row[-2]
+            break
+    stacks = []
+    for i in range(int(number_of_stacks)):
+        stacks.append([])
+    for row in puzzle_input:
+        if row[1] == "1":
+            break
+        for character in range(1, (len(row) - 1), 4):
+            if row[character] != " ":
+                stacks[character // 4].insert(0, row[character])
+    instructions = []
+    for line in puzzle_input:
+        if line == "":
+            continue
+        if line[0] == "m":
+            # I hate data mangling I hate data mangling I hate data mangling.
+            piece_a = list(line.split(" "))
+            piece_b = [int(piece_a[1]), int(piece_a[3]) - 1, int(piece_a[5]) - 1]
+            instructions.append(tuple(piece_b))
+    combined_data = (stacks, instructions)
+    return combined_data
 
 
 def score_rock_paper_scissors(choices: tuple) -> int:
@@ -228,4 +249,4 @@ def rucksack_valuation(character: str) -> int:
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_05a())
+    print(day_05b())
