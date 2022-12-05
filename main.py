@@ -2,6 +2,8 @@
 # The first part of this file is code to run each part of each day's challenges.
 # The second part of this file will be any helper functions needed on multiple days.
 # Puzzle inputs will be found in /inputs
+from pprint import pprint
+
 
 # ====================== Daily Challenges ======================
 def day_01a():
@@ -43,7 +45,7 @@ def day_02b():
 
 
 def day_03a():
-    rucksacks = prepare_simple_input("inputs/03.txt")
+    rucksacks = prepare_simple_input("inputs/03.dat")
     # Make a lambda function to split each string in rucksacks into a tuple of two strings at the halfway point.
     rucksacks = list(map(lambda x: (x[: len(x) // 2], x[len(x) // 2 :]), rucksacks))
     priority_sum = 0
@@ -56,7 +58,7 @@ def day_03a():
 
 
 def day_03b():
-    rucksacks = prepare_simple_input("inputs/03.txt")
+    rucksacks = prepare_simple_input("inputs/03.dat")
     groups = []
     # Group each three rucksacks together in a tuple in the groups list.
     for i in range(0, len(rucksacks), 3):
@@ -95,6 +97,40 @@ def day_04b():
     return overlapping_ranges
 
 
+def day_05a():
+    puzzle_input = prepare_simple_input("inputs/05.dat")
+    number_of_stacks = 0
+    for row in puzzle_input:
+        if row[1] == "1":
+            number_of_stacks = row[-2]
+            break
+    stacks = []
+    for i in range(int(number_of_stacks)):
+        stacks.append([])
+    for row in puzzle_input:
+        if row[1] == "1":
+            break
+        for character in range(1, (len(row) - 1), 4):
+            if row[character] != " ":
+                stacks[character // 4].insert(0, row[character])
+    instructions = []
+    for line in puzzle_input:
+        if line == "":
+            continue
+        if line[0] == "m":
+            # I hate data mangling I hate data mangling I hate data mangling.
+            piece_a = list(line.split(" "))
+            piece_b = [int(piece_a[1]), int(piece_a[3]) - 1, int(piece_a[5]) - 1]
+            instructions.append(tuple(piece_b))
+    for command in instructions:
+        for i in range(int(command[0])):
+            stacks[command[2]].append(stacks[command[1]].pop())
+    final_word = ""
+    for stack in stacks:
+        final_word += stack[-1]
+    return final_word
+
+
 # ====================== Helper Functions ======================
 def prepare_simple_input(filename: str) -> list:
     with open(filename) as f:
@@ -103,7 +139,7 @@ def prepare_simple_input(filename: str) -> list:
 
 
 def prepare_day_one() -> list[list]:
-    with open("inputs/01.txt") as f:
+    with open("inputs/01.dat") as f:
         data = f.read().splitlines()
     list_of_lists: list[list] = [[]]
     for i in range(len(data)):
@@ -115,7 +151,7 @@ def prepare_day_one() -> list[list]:
 
 
 def prepare_day_two():
-    with open("inputs/02.txt") as f:
+    with open("inputs/02.dat") as f:
         data = f.read().splitlines()
     round_list = []
     for i in range(len(data)):
@@ -125,7 +161,7 @@ def prepare_day_two():
 
 
 def prepare_day_four():
-    assignment_list = prepare_simple_input("inputs/04.txt")
+    assignment_list = prepare_simple_input("inputs/04.dat")
     groups = []
     for line in assignment_list:
         if line != "":
@@ -192,4 +228,4 @@ def rucksack_valuation(character: str) -> int:
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_04b())
+    print(day_05a())

@@ -1,5 +1,5 @@
-# Advent of Code input files. These will be saved with names of two-numbers(representing the day) followed by .txt - e.g. 01.txt
-/inputs/*.txt
+# Advent of Code input files. These will be saved with names of two-numbers(representing the day) followed by .dat - e.g. 01.dat
+/inputs/*.dat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
