@@ -71,14 +71,7 @@ def day_03b():
 
 
 def day_04a():
-    assignment_list = prepare_simple_input("inputs/04.txt")
-    groups = []
-    for line in assignment_list:
-        if line != "":
-            first, second = line.split(",")
-            a, b = first.split("-")
-            c, d = second.split("-")
-            groups.append((int(a), int(b), int(c), int(d)))
+    groups = prepare_day_four()
     fully_contained_groups = 0
     for group in groups:
         if group[0] <= group[2] and group[1] >= group[3]:
@@ -86,6 +79,20 @@ def day_04a():
         elif group[0] >= group[2] and group[1] <= group[3]:
             fully_contained_groups += 1
     return fully_contained_groups
+
+
+def day_04b():
+    groups = prepare_day_four()
+    overlapping_ranges = 0
+    for group in groups:
+        if (
+            (group[2] <= group[0] <= group[3])
+            or (group[2] <= group[1] <= group[3])
+            or (group[0] <= group[2] and group[1] >= group[3])
+            or (group[0] >= group[2] and group[1] <= group[3])
+        ):
+            overlapping_ranges += 1
+    return overlapping_ranges
 
 
 # ====================== Helper Functions ======================
@@ -115,6 +122,18 @@ def prepare_day_two():
         if data[i] != "":
             round_list.append((data[i][0], data[i][2]))
     return round_list
+
+
+def prepare_day_four():
+    assignment_list = prepare_simple_input("inputs/04.txt")
+    groups = []
+    for line in assignment_list:
+        if line != "":
+            first, second = line.split(",")
+            a, b = first.split("-")
+            c, d = second.split("-")
+            groups.append((int(a), int(b), int(c), int(d)))
+    return groups
 
 
 def score_rock_paper_scissors(choices: tuple) -> int:
@@ -173,4 +192,4 @@ def rucksack_valuation(character: str) -> int:
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_04a())
+    print(day_04b())
