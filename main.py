@@ -70,6 +70,24 @@ def day_03b():
     return priority_sum
 
 
+def day_04a():
+    assignment_list = prepare_simple_input("inputs/04.txt")
+    groups = []
+    for line in assignment_list:
+        if line != "":
+            first, second = line.split(",")
+            a, b = first.split("-")
+            c, d = second.split("-")
+            groups.append((int(a), int(b), int(c), int(d)))
+    fully_contained_groups = 0
+    for group in groups:
+        if group[0] <= group[2] and group[1] >= group[3]:
+            fully_contained_groups += 1
+        elif group[0] >= group[2] and group[1] <= group[3]:
+            fully_contained_groups += 1
+    return fully_contained_groups
+
+
 # ====================== Helper Functions ======================
 def prepare_simple_input(filename: str) -> list:
     with open(filename) as f:
@@ -155,4 +173,4 @@ def rucksack_valuation(character: str) -> int:
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_03b())
+    print(day_04a())
