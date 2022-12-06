@@ -123,6 +123,15 @@ def day_05b():
     return final_word
 
 
+def day_06a():
+    signal = prepare_simple_input("inputs/06.dat")[0]
+    sig_length = len(signal)
+    for i in range(sig_length - 4):
+        test_set = set(signal[i : i + 4])
+        if len(test_set) == 4:
+            return i + 4
+
+
 # ====================== Helper Functions ======================
 def prepare_simple_input(filename: str) -> list:
     with open(filename) as f:
@@ -249,4 +258,4 @@ def rucksack_valuation(character: str) -> int:
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_05b())
+    print(day_06a())
