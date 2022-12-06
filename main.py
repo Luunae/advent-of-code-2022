@@ -2,7 +2,7 @@
 # The first part of this file is code to run each part of each day's challenges.
 # The second part of this file will be any helper functions needed on multiple days.
 # Puzzle inputs will be found in /inputs
-from pprint import pprint
+from enum import Enum
 
 
 # ====================== Daily Challenges ======================
@@ -125,20 +125,12 @@ def day_05b():
 
 def day_06a():
     signal = prepare_simple_input("inputs/06.dat")[0]
-    sig_length = len(signal)
-    for i in range(sig_length - 4):
-        test_set = set(signal[i : i + 4])
-        if len(test_set) == 4:
-            return i + 4
+    return find_first_signal_marker(signal, "START_OF_PACKET")
 
 
 def day_06b():
     signal = prepare_simple_input("inputs/06.dat")[0]
-    sig_length = len(signal)
-    for i in range(sig_length - 14):
-        test_set = set(signal[i: i + 14])
-        if len(test_set) == 14:
-            return i + 14
+    return find_first_signal_marker(signal, "START_OF_MESSAGE")
 
 
 # ====================== Helper Functions ======================
@@ -264,7 +256,19 @@ def rucksack_valuation(character: str) -> int:
         return ord(character) - 38
 
 
+def find_first_signal_marker(signal: str, marker: str) -> int:
+    class SignalMarker(Enum):
+        START_OF_PACKET = 4
+        START_OF_MESSAGE = 14
+    offset = SignalMarker[marker].value
+    sig_length = len(signal)
+    for i in range(sig_length - offset):
+        test_set = set(signal[i: i + offset])
+        if len(test_set) == offset:
+            return i + offset
+
+
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_06b())
+    print(day_06a())
