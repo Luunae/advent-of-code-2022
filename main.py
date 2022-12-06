@@ -132,6 +132,15 @@ def day_06a():
             return i + 4
 
 
+def day_06b():
+    signal = prepare_simple_input("inputs/06.dat")[0]
+    sig_length = len(signal)
+    for i in range(sig_length - 14):
+        test_set = set(signal[i: i + 14])
+        if len(test_set) == 14:
+            return i + 14
+
+
 # ====================== Helper Functions ======================
 def prepare_simple_input(filename: str) -> list:
     with open(filename) as f:
@@ -258,4 +267,4 @@ def rucksack_valuation(character: str) -> int:
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_06a())
+    print(day_06b())
