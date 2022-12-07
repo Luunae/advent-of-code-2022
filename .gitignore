@@ -1,6 +1,9 @@
 # Advent of Code input files. These will be saved with names of two-numbers(representing the day) followed by .dat - e.g. 01.dat
 /inputs/*.dat
 
+# Personal tests.
+/test_days.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -233,4 +236,3 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
-/test_days.py
