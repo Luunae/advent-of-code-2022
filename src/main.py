@@ -3,6 +3,7 @@
 # The second part of this file will be any helper functions needed on multiple days.
 # Puzzle inputs will be found in /inputs
 from enum import Enum
+import sys
 
 
 # ====================== Daily Challenges ======================
@@ -133,6 +134,83 @@ def day_06b():
     return find_first_signal_marker(signal, "START_OF_MESSAGE")
 
 
+def day_07a():
+    filetree = prepare_day_seven("inputs/07-example.dat")
+    return traverse_sum_sizes(filetree.directories, 100_000, True)
+
+
+def day_07b():
+    total_space = 70_000_000
+    space_needed = 30_000_000
+    filetree = prepare_day_seven("inputs/07.dat")
+    current_space_taken = sum_file_sizes(filetree.directories)
+    space_to_remove = space_needed - (total_space - current_space_taken)
+    print(f"Total space: {total_space}")
+    print(f"Current space taken: {current_space_taken}")
+    print(f"Space needed: {space_needed}")
+    print(f"Space left: {total_space - current_space_taken}")
+    directories = create_list_of_directories("", filetree.directories, [])
+    directories = sorted(directories, key=lambda x: x[1], reverse=False)
+    print(directories)
+    for directory in directories:
+        if directory[1] >= space_to_remove:
+            return directory[1]
+
+
+# ======================= Helper Classes =======================
+class Filesystem:
+    def __init__(self):
+        self.directories = {}
+        self.current_directory = ""
+
+    def add_directory(self, directory_name: str):
+        location = self.current_directory.split("/")
+        while "" in location:
+            location.remove("")
+        current_directory = self.directories
+        while location:
+            part = location.pop(0)
+            current_directory = current_directory[part]
+        current_directory[directory_name] = {}
+
+    def cd(self, directory_name: str):
+        if directory_name == "..":
+            self.current_directory = self.current_directory[:-1]
+            while self.current_directory[-1] != "/":
+                self.current_directory = self.current_directory[:-1]
+        else:
+            # I think I need to rebuild the nested dictionary trick here.
+            location = self.current_directory.split("/")
+            while "" in location:
+                location.remove("")
+            current_directory = self.directories
+            while location:
+                part = location.pop(0)
+                try:
+                    current_directory = current_directory[part]
+                except:  # Haha, fuck.
+                    continue
+            if directory_name in current_directory:
+                self.current_directory += directory_name + "/"
+            else:
+                self.add_directory(directory_name)
+                self.current_directory += directory_name + "/"
+
+    def add_file(
+        self, file_size: int, file_name: str
+    ):  # Mimic the behaviour of the AoC input.
+        location = self.current_directory.split("/")
+        # a/b/c -> ["a", "b", "c"]
+        # directories = {"a": {"b": {"c": {}}}}}
+        while "" in location:
+            location.remove("")
+        current_directory = self.directories
+        while location:
+            part = location.pop(0)
+            current_directory = current_directory[part]
+        current_directory[file_name] = file_size
+
+
 # ====================== Helper Functions ======================
 def prepare_simple_input(filename: str) -> list:
     with open(filename) as f:
@@ -203,6 +281,32 @@ def prepare_day_five():
     return combined_data
 
 
+def prepare_day_seven(filename: str = "inputs/07.dat"):
+    log = prepare_simple_input(filename)
+    filetree = Filesystem()
+    for line in log:
+        # AAAAA everything in here is not general enough.
+        if line == "$ cd /":
+            filetree.current_directory = "/"
+        elif line[0] == "$":
+            if line[2:4] == "ls":
+                continue
+            if line[-2:] == "..":
+                filetree.cd("..")
+            else:  # $ cd <directory>
+                filetree.cd(line[5:])
+        elif line[0:3] == "dir":
+            filetree.add_directory(line[4:])
+        else:
+            # This is a file. Format:
+            # <size> <filename>
+            # <size> is a number, <filename> is a string.
+            # Filenames don't have spaces in them, and can have any extension or no extension.
+            part = line.split(" ")
+            filetree.add_file(int(part[0]), part[1])
+    return filetree
+
+
 def score_rock_paper_scissors(choices: tuple) -> int:
     score = 0
     # Make a name to point relationship. "A" is 1 point, "B" is 2 points, C is 3 points.
@@ -255,15 +359,62 @@ def find_first_signal_marker(signal: str, marker: str) -> int:
     class SignalMarker(Enum):
         START_OF_PACKET = 4
         START_OF_MESSAGE = 14
+
     offset = SignalMarker[marker].value
     sig_length = len(signal)
     for i in range(sig_length - offset):
-        test_set = set(signal[i: i + offset])
+        test_set = set(signal[i : i + offset])
         if len(test_set) == offset:
             return i + offset
+
+
+def sum_file_sizes(directory):
+    sum = 0
+    for file_name, value in directory.items():
+        if isinstance(value, dict):
+            sum += sum_file_sizes(value)
+        else:
+            sum += value
+    return sum
+
+
+def traverse_sum_sizes(
+    directory, max_size, debug=False
+):  # TODO: Rename/refactor. 12/18/2022
+    total_sizes = 0
+    for k, v in directory.items():
+        if isinstance(v, dict):
+            # v is a dir
+            total_sizes += traverse_sum_sizes(v, max_size)
+            dir_size = sum_file_sizes(v)
+            if debug:
+                print(f"Directory {k} has size {dir_size}")
+            # if dir is <= input size add to total of sizes
+            if dir_size <= max_size:
+                total_sizes += dir_size
+        else:
+            # v is a file
+            pass
+    if debug:
+        print(f"Directory {directory} has size {total_sizes}")
+    return total_sizes
+
+
+def create_list_of_directories(name, filetree, directory_list):
+    size_of_dir: int = sum_file_sizes(filetree)
+    if name != "":
+        directory_list.append((name, size_of_dir))
+    else:
+        directory_list.append(("/", size_of_dir))
+    for k, v in filetree.items():
+        if isinstance(v, dict):
+            # print(f"Directory: {k}")
+            # print(f"Size: {size_of_dir}")
+            create_list_of_directories(k, v, directory_list)
+    return directory_list
 
 
 # ====================== Daily Challenges ======================
 # More of a scratch place to run each day's challenges. Edit as needed.
 if __name__ == "__main__":
-    print(day_01a())
+    print(day_07b())
